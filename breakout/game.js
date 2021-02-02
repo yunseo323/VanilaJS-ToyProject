@@ -12,7 +12,7 @@ let dy = -2;
 let ballRadius = 10;
 
 let barWidth = 100;
-let barHeigth = 20;
+let barHeigth = 10;
 let barX;
 
 /*마우스 이동 감지*/
@@ -41,21 +41,35 @@ function drawBar() {
     ctx.closePath();
 }
 
-function draw() {
+function collisionDetect(){ //충돌처리 & 공 튀기기
+    if(x + dx - ballRadius < 0 || x + dx + ballRadius  > canvas.width){
+        dx = -dx;
+    } //x 좌표
+
+    if(y+dy-ballRadius<0){ //천장 충돌
+        dy = -dy;
+    }else if(y+dy+ballRadius>canvas.height){
+        if(barX<x && x<barX+barWidth){
+            dy = -dy;
+        } //bar와 충돌처리
+        else{
+            alert("GAME OVER");
+            window.location.reload();
+        }
+    }
+}
+
+function draw() { //main logic
     ctx.clearRect(0, 0, canvas.width, canvas.height); // canvas 지우기
     drawBall();
     drawBar();
 
+    
     x += dx;
     y += dy;
 
-    /* 공 튀기기 */
-    if(y + dy - ballRadius < 0 || y + dy + ballRadius > canvas.height){
-        dy = -dy;
-    }
-    if(x + dx - ballRadius < 0 || x + dx + ballRadius  > canvas.width){
-        dx = -dx;
-    }
+    collisionDetect();
+    
     
     
 }
