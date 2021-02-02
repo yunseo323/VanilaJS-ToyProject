@@ -1,5 +1,5 @@
 'use strict';
-
+/* canvas */
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 
@@ -13,8 +13,17 @@ let ballRadius = 10;
 
 let barWidth = 100;
 let barHeigth = 20;
+let barX;
 
+/*마우스 이동 감지*/
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
+function mouseMoveHandler(e) {
+    let relativeX = e.clientX - canvas.offsetLeft;
+    if(0 < relativeX && relativeX < canvas.width) {
+        barX = relativeX - barWidth/2 ;
+    }
+}
 
 function drawBall() {
     ctx.beginPath();
@@ -26,7 +35,7 @@ function drawBall() {
 
 function drawBar() {
     ctx.beginPath();
-    ctx.rect(0,canvas.height-barHeigth,barWidth,barHeigth);
+    ctx.rect(barX,canvas.height-barHeigth,barWidth,barHeigth);
     ctx.fillStyle = "black";
     ctx.fill();
     ctx.closePath();
@@ -47,6 +56,8 @@ function draw() {
     if(x + dx - ballRadius < 0 || x + dx + ballRadius  > canvas.width){
         dx = -dx;
     }
+    
+    
 }
 
 setInterval(draw, 10);
