@@ -19,17 +19,17 @@ let barX;
 
 /*벽돌*/
 let brickRowCount = 4;
-let brickColumnCount = 5;
-let brickWidth = 75;
+let brickColumnCount = 6;
+let brickWidth = 110;
 let brickHeight = 20;
-let brickPadding = 10;
+let brickMargin = 15;
 let brickOffsetTop = 30;
-let brickOffsetLeft = 30;
+let brickOffsetLeft = 35;
 let bricks = [];
-for(var c=0; c<brickColumnCount; c++) {
+for(let c=0; c<brickColumnCount; c++) {
     bricks[c] = [];
-    for(var r=0; r<brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0, num: 0 };
+    for(let r=0; r<brickRowCount; r++) {
+        bricks[c][r] = { x: 0, y: 0 };
     }
 }
 /*마우스 이동 감지*/
@@ -52,7 +52,7 @@ function drawBricks(){
             ctx.beginPath();
             ctx.rect(bricks[c][r].x,bricks[c][r].y,brickWidth,brickHeight);
             //color
-            bricks[c][r].num = Math.floor(Math.random()*3+1);
+            let bricks[c][r].num = Math.floor(Math.random()*3+1);
             if(bricks[c][r].num===1){
                 ctx.fillStyle = "purple";
                 ctx.globalAlpha = 0.3;
@@ -68,6 +68,8 @@ function drawBricks(){
         }
     }
 }
+
+
 function drawBall() {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius, 0, Math.PI*2);
@@ -84,15 +86,15 @@ function drawBar() {
     ctx.closePath();
 }
 
-function collisionDetect(){ //충돌처리 & 공 튀기기
+function barWallCollision(){ //충돌처리 & 공 튀기기
     if(x + dx - ballRadius < 0 || x + dx + ballRadius  > canvas.width){
         dx = -dx;
     } //x 좌표
 
-    if(y+dy-ballRadius<0){ //천장 충돌
+    if(y + dy - ballRadius < 0){ //천장 충돌
         dy = -dy;
-    }else if(y+dy+ballRadius>canvas.height){
-        if(barX<x && x<barX+barWidth){
+    }else if(y + dy + ballRadius > canvas.height){
+        if(barX < x && x < barX + barWidth){
             dy = -dy;
         } //bar와 충돌처리
         else{
@@ -106,6 +108,20 @@ function collisionDetect(){ //충돌처리 & 공 튀기기
     }
 }
 
+function brickCollision(){ //벽돌 충돌처리
+    let b = bricks[c][r];
+    bricks.forEach((c) => 
+    c.forEach((r)=>
+    {
+    if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+        dy = -dy;
+        b.num -= 1;
+    }
+    }
+));
+
+}
+
 function draw() { //main logic
     ctx.clearRect(0, 0, canvas.width, canvas.height); // canvas 지우기
     drawBricks();
@@ -115,11 +131,7 @@ function draw() { //main logic
     
     x += dx;
     y += dy;
-
-    collisionDetect();
     
-    
-    
+    barWallCollision();
 }
-
 setInterval(draw, 10);
