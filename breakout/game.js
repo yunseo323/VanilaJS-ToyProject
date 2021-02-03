@@ -1,20 +1,37 @@
 'use strict';
+
 /* canvas */
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 
 /*변수 지정*/
+/*공*/
 let x = canvas.width/2;
 let y = canvas.height-30;
-let dx = 2;
+let dx = 2; //setter 함수
 let dy = -2;
-
 let ballRadius = 10;
 
+/*bar*/
 let barWidth = 100;
 let barHeigth = 10;
 let barX;
 
+/*벽돌*/
+let brickRowCount = 4;
+let brickColumnCount = 5;
+let brickWidth = 75;
+let brickHeight = 20;
+let brickPadding = 10;
+let brickOffsetTop = 30;
+let brickOffsetLeft = 30;
+let bricks = [];
+for(var c=0; c<brickColumnCount; c++) {
+    bricks[c] = [];
+    for(var r=0; r<brickRowCount; r++) {
+        bricks[c][r] = { x: 0, y: 0, num: 0 };
+    }
+}
 /*마우스 이동 감지*/
 document.addEventListener("mousemove", mouseMoveHandler, false);
 
@@ -25,6 +42,32 @@ function mouseMoveHandler(e) {
     }
 }
 
+function drawBricks(){
+    for(let c=0; c<brickColumnCount; c++){
+        for(let r=0; r<brickRowCount; r++){
+            let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+            let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(bricks[c][r].x,bricks[c][r].y,brickWidth,brickHeight);
+            //color
+            bricks[c][r].num = Math.floor(Math.random()*3+1);
+            if(bricks[c][r].num===1){
+                ctx.fillStyle = "purple";
+                ctx.globalAlpha = 0.3;
+            }else if(bricks[c][r].num===2){
+                ctx.fillStyle = "purple";
+                ctx.globalAlpha = 0.6;
+            }else{
+                ctx.fillStyle = "purple";
+                ctx.globalAlpha = 1;
+            }
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+}
 function drawBall() {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius, 0, Math.PI*2);
@@ -55,12 +98,17 @@ function collisionDetect(){ //충돌처리 & 공 튀기기
         else{
             alert("GAME OVER");
             window.location.reload();
+            /*공다시그리기*/
+            x = canvas.width/2;
+            y = canvas.height-30;
+            drawBall();
         }
     }
 }
 
 function draw() { //main logic
     ctx.clearRect(0, 0, canvas.width, canvas.height); // canvas 지우기
+    drawBricks();
     drawBall();
     drawBar();
 
