@@ -8,8 +8,8 @@ let ctx = canvas.getContext("2d");
 /*공*/
 let x = canvas.width/2;
 let y = canvas.height-30;
-let dx = 2; //setter 함수
-let dy = -2;
+let dx = 3; //setter 함수
+let dy = -3;
 let ballRadius = 10;
 
 /*bar*/
@@ -29,7 +29,8 @@ let bricks = [];
 for(let c=0; c<brickColumnCount; c++) {
     bricks[c] = [];
     for(let r=0; r<brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0 };
+        bricks[c][r] = { x: 0, y: 0, num: 0};
+        bricks[c][r].num = Math.floor(Math.random()*3 +1);
     }
 }
 /*마우스 이동 감지*/
@@ -43,31 +44,41 @@ function mouseMoveHandler(e) {
 }
 
 function drawBricks(){
+    
+    brickCollision();
     for(let c=0; c<brickColumnCount; c++){
         for(let r=0; r<brickRowCount; r++){
-            let brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-            let brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+
+            if(bricks[c][r].num>0){
+            let brickX = (c*(brickWidth+brickMargin))+brickOffsetLeft;
+            let brickY = (r*(brickHeight+brickMargin))+brickOffsetTop;
             bricks[c][r].x = brickX;
             bricks[c][r].y = brickY;
             ctx.beginPath();
             ctx.rect(bricks[c][r].x,bricks[c][r].y,brickWidth,brickHeight);
+            
             //color
-            let bricks[c][r].num = Math.floor(Math.random()*3+1);
-            if(bricks[c][r].num===1){
-                ctx.fillStyle = "purple";
-                ctx.globalAlpha = 0.3;
-            }else if(bricks[c][r].num===2){
-                ctx.fillStyle = "purple";
-                ctx.globalAlpha = 0.6;
-            }else{
-                ctx.fillStyle = "purple";
-                ctx.globalAlpha = 1;
+                if(bricks[c][r].num===1){
+                    ctx.fillStyle = "purple";
+                    ctx.globalAlpha = 0.3;
+                }else if(bricks[c][r].num===2){
+                    ctx.fillStyle = "purple";
+                    ctx.globalAlpha = 0.6;
+                }else{
+                    ctx.fillStyle = "purple";
+                    ctx.globalAlpha = 1;
+                }
+                ctx.fill();
+                ctx.closePath();
+            
+                }
             }
-            ctx.fill();
-            ctx.closePath();
         }
+        ctx.globalAlpha = 1; //투명도 원상복귀
     }
-}
+    
+    
+
 
 
 function drawBall() {
@@ -109,16 +120,15 @@ function barWallCollision(){ //충돌처리 & 공 튀기기
 }
 
 function brickCollision(){ //벽돌 충돌처리
-    let b = bricks[c][r];
-    bricks.forEach((c) => 
-    c.forEach((r)=>
-    {
-    if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
-        dy = -dy;
-        b.num -= 1;
+    for(let c=0; c<brickColumnCount; c++) {
+        for(let r=0; r<brickRowCount; r++) {
+            let b = bricks[c][r];
+            if(b.num>0 && x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+                dy = -dy;
+                bricks[c][r].num -= 1;
+            }
+        }
     }
-    }
-));
 
 }
 
