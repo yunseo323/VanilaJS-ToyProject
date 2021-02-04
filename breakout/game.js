@@ -26,13 +26,19 @@ let brickMargin = 15;
 let brickOffsetTop = 30;
 let brickOffsetLeft = 35;
 let bricks = [];
+/*점수*/
+let score = 0;
+let brickScore = 0;
+
 for(let c=0; c<brickColumnCount; c++) {
     bricks[c] = [];
     for(let r=0; r<brickRowCount; r++) {
         bricks[c][r] = { x: 0, y: 0, num: 0};
         bricks[c][r].num = Math.floor(Math.random()*3 +1);
+        brickScore += bricks[c][r].num * 10; //벽돌 점수
     }
 }
+
 /*마우스 이동 감지*/
 document.addEventListener("mousemove", mouseMoveHandler, false);
 
@@ -43,6 +49,11 @@ function mouseMoveHandler(e) {
     }
 }
 
+function drawScore(){
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText("Score: "+score,8,20);
+}
 function drawBricks(){
     
     brickCollision();
@@ -109,12 +120,15 @@ function barWallCollision(){ //충돌처리 & 공 튀기기
             dy = -dy;
         } //bar와 충돌처리
         else{
-            alert("GAME OVER");
-            window.location.reload();
-            /*공다시그리기*/
-            x = canvas.width/2;
-            y = canvas.height-30;
-            drawBall();
+            if(confirm("<<GAME OVER>>\n 게임을 다시 시작하시겠습니까?")){
+                document.location.reload();
+                /*공다시그리기*/
+                
+            }
+            else{
+                alert("GAME OVER");
+            }
+            
         }
     }
 }
@@ -123,17 +137,24 @@ function brickCollision(){ //벽돌 충돌처리
     for(let c=0; c<brickColumnCount; c++) {
         for(let r=0; r<brickRowCount; r++) {
             let b = bricks[c][r];
+            
             if(b.num>0 && x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
                 dy = -dy;
                 bricks[c][r].num -= 1;
+                score += 10;
             }
         }
+    }
+    if(brickScore===score){
+        alert("YOU WIN!");
+        window.location.reload();
     }
 
 }
 
 function draw() { //main logic
     ctx.clearRect(0, 0, canvas.width, canvas.height); // canvas 지우기
+    drawScore();
     drawBricks();
     drawBall();
     drawBar();
