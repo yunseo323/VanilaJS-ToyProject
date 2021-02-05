@@ -1,5 +1,7 @@
 'use strict';
 
+// import { drawBall, drawBar, drawBricks, drawScore } from "./draw.js";
+
 /* canvas */
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
@@ -8,8 +10,8 @@ let ctx = canvas.getContext("2d");
 /*공*/
 let x = canvas.width/2;
 let y = canvas.height-30;
-let dx = 3; //setter 함수
-let dy = -3;
+let dx = 2; //setter 함수
+let dy = -2;
 let ballRadius = 10;
 
 /*bar*/
@@ -34,7 +36,7 @@ for(let c=0; c<brickColumnCount; c++) {
     bricks[c] = [];
     for(let r=0; r<brickRowCount; r++) {
         bricks[c][r] = { x: 0, y: 0, num: 0};
-        bricks[c][r].num = Math.floor(Math.random()*3 +1);
+        bricks[c][r].num = Math.floor(Math.random()*3)+1;
         brickScore += bricks[c][r].num * 10; //벽돌 점수
     }
 }
@@ -54,9 +56,9 @@ function drawScore(){
     ctx.fillStyle = "black";
     ctx.fillText("Score: "+score,8,20);
 }
+
 function drawBricks(){
     
-    brickCollision();
     for(let c=0; c<brickColumnCount; c++){
         for(let r=0; r<brickRowCount; r++){
 
@@ -86,11 +88,8 @@ function drawBricks(){
             }
         }
         ctx.globalAlpha = 1; //투명도 원상복귀
+        brickCollision();
     }
-    
-    
-
-
 
 function drawBall() {
     ctx.beginPath();
@@ -138,9 +137,10 @@ function brickCollision(){ //벽돌 충돌처리
         for(let r=0; r<brickRowCount; r++) {
             let b = bricks[c][r];
             
-            if(b.num>0 && x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+            if(b.num>0 && b.x < x && x < b.x+brickWidth && b.y < y && y < b.y+brickHeight) {
                 dy = -dy;
-                bricks[c][r].num -= 1;
+                // dx= -dx;
+                b.num -= 1;
                 score += 10;
             }
         }
@@ -152,7 +152,7 @@ function brickCollision(){ //벽돌 충돌처리
 
 }
 
-function draw() { //main logic
+function game() { //main logic
     ctx.clearRect(0, 0, canvas.width, canvas.height); // canvas 지우기
     drawScore();
     drawBricks();
@@ -165,4 +165,4 @@ function draw() { //main logic
     
     barWallCollision();
 }
-setInterval(draw, 10);
+setInterval(game, 10);
