@@ -1,7 +1,8 @@
 'use strict';
 
-// import { drawBall, drawBar, drawBricks, drawScore } from "./draw.js";
-
+class Global{
+    
+}
 /* canvas */
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
@@ -77,7 +78,7 @@ function drawBricks(){
                 }else if(bricks[c][r].num===2){
                     ctx.fillStyle = "purple";
                     ctx.globalAlpha = 0.6;
-                }else{
+                }else if(bricks[c][r].num===3){
                     ctx.fillStyle = "purple";
                     ctx.globalAlpha = 1;
                 }
@@ -88,7 +89,7 @@ function drawBricks(){
             }
         }
         ctx.globalAlpha = 1; //투명도 원상복귀
-        brickCollision();
+        
     }
 
 function drawBall() {
@@ -114,7 +115,7 @@ function barWallCollision(){ //충돌처리 & 공 튀기기
 
     if(y + dy - ballRadius < 0){ //천장 충돌
         dy = -dy;
-    }else if(y + dy + ballRadius > canvas.height){
+    }else if(y + dy + ballRadius > canvas.height - barHeigth){
         if(barX < x && x < barX + barWidth){
             dy = -dy;
         } //bar와 충돌처리
@@ -137,10 +138,10 @@ function brickCollision(){ //벽돌 충돌처리
         for(let r=0; r<brickRowCount; r++) {
             let b = bricks[c][r];
             
-            if(b.num>0 && b.x < x && x < b.x+brickWidth && b.y < y && y < b.y+brickHeight) {
+            if(b.num > 0 && b.x < x && x < b.x + brickWidth && b.y < y && y < b.y + brickHeight) {
                 dy = -dy;
                 // dx= -dx;
-                b.num -= 1;
+                b.num -= 1; //bricks[c][r].num 이라고 하면 에러남
                 score += 10;
             }
         }
@@ -155,6 +156,7 @@ function brickCollision(){ //벽돌 충돌처리
 function game() { //main logic
     ctx.clearRect(0, 0, canvas.width, canvas.height); // canvas 지우기
     drawScore();
+    brickCollision();
     drawBricks();
     drawBall();
     drawBar();
