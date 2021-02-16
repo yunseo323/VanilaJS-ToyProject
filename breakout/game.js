@@ -1,5 +1,5 @@
 'use strict';
-
+/* MDN 참고 */
 class Global{
     
 }
