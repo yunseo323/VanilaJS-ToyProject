@@ -1,6 +1,6 @@
 class GameStateManager{
     constructor(){
-        // this.gameState = new GameStartState();
+        this.gameState = new GameStartState();
     }
     
     onChangeGameState(gameState){

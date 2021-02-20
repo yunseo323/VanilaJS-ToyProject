@@ -1,8 +1,6 @@
 'use strict';
 /* MDN 참고 */
-class Global{
-    
-}
+
 /* canvas */
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
@@ -29,9 +27,11 @@ let brickMargin = 15;
 let brickOffsetTop = 30;
 let brickOffsetLeft = 35;
 let bricks = [];
-/*점수*/
+/*점수, lives*/
 let score = 0;
 let brickScore = 0;
+let lives = 3;
+
 
 for(let c=0; c<brickColumnCount; c++) {
     bricks[c] = [];
@@ -57,6 +57,12 @@ function drawScore(){
     ctx.fillStyle = "black";
     ctx.fillText("Score: "+score,8,20);
 }
+
+function drawLives() {
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText("Lives: "+lives, canvas.width-65, 20);
+  }
 
 function drawBricks(){
     
@@ -119,16 +125,21 @@ function barWallCollision(){ //충돌처리 & 공 튀기기
         if(barX < x && x < barX + barWidth){
             dy = -dy;
         } //bar와 충돌처리
-        else{
-            if(confirm("<<GAME OVER>>\n 게임을 다시 시작하시겠습니까?")){
-                document.location.reload();
-                /*공다시그리기*/
-                
+        else{ //그 외의 충돌
+            lives--;
+            if(!lives){
+                alert("Game Over");
+                window.location.reload();
             }
             else{
-                alert("GAME OVER");
+                console.log("깎여!");
+                x = canvas.width/2;
+                y = canvas.height-30;
+                //속도를 더 빠르게
+                dx = 3;
+                dy = -3;
+                barX = (canvas.width-barWidth)/2;
             }
-            
         }
     }
 }
@@ -160,11 +171,14 @@ function game() { //main logic
     drawBricks();
     drawBall();
     drawBar();
+    drawLives();
 
     
     x += dx;
     y += dy;
     
     barWallCollision();
+    requestAnimationFrame(game);
 }
-setInterval(game, 10);
+
+game();
