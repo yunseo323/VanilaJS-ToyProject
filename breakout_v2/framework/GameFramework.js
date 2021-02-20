@@ -12,7 +12,7 @@ function Render(){
     gameStateManager.render();
 }
 
-function gameLoop(){
+function gameLoop(){ //게임루프
     Update();
     Render();
     window.requestAnimationFrame(gameLoop);
