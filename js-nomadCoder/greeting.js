@@ -17,7 +17,7 @@ function handleSubmit(event){
 }
 
 function askForName(){
-    form.classList.add(SHOWING_CN);
+    form.classList.add(SHOWING_CN); //showing이라는 class 추가
     form.addEventListener("submit",handleSubmit); //default 동작 막기
 }
 
